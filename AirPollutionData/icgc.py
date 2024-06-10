@@ -190,10 +190,11 @@ LCZ_DEFINITION = { k:n for k,n in zip(LCZ_KEYS, nom2) }
 
 
 def get_LCZmax(eoi_code: str, tipo: int) -> tuple:
+    dicc0 = { value: round(0.0, 2) for i,value in enumerate(LCZ_KEYS) }
     # anem a obtenir la informacio associada a les LCZs dins d'un buffer de 500m de l'estacio
     dicc = EOI_LCZ.get(eoi_code, {})  # { 0: [LCZ_1_m2, LCZ_2_m2, LCZ_3_m2, LCZ_4_m2, LCZ_5_m2, LCZ_6_m2, LCZ_7_m2, LCZ_8_m2, LCZ_9_m2, LCZ_10_m2, LCZ_A_m2, LCZ_B_m2, LCZ_C_m2, LCZ_D_m2, LCZ_E_m2, LCZ_F_m2, LCZ_G_m2, T_LCZ_m2,], 1: [%LCZ_1, %LCZ_2, %LCZ_3, %LCZ_4, %LCZ_5, %LCZ_6, %LCZ_7, %LCZ_8, %LCZ_9,% LCZ_10, %LCZ_A, %LCZ_B, %LCZ_C, %LCZ_D, %LCZ_E, %LCZ_F, %LCZ_G,], },
     llista = dicc.get(tipo, [])
-    if not llista: return({}, 'none')
+    if not llista: return(dicc0, "")
 
     if tipo == 0:
         #         0         1         2         3         4         5         6         7         8          9         10        11        12        13        14        15        16      17
@@ -208,7 +209,7 @@ def get_LCZmax(eoi_code: str, tipo: int) -> tuple:
         dicc = { value: round(float(llista[i]), 2) for i, value in enumerate(LCZ_KEYS) }
         return (dicc, max(dicc, key=dicc.get))
     else:
-        return ({}, "none")
+        return (dicc0, "")
 
 
 def get_LCZ_image(lcz: str) -> str:
@@ -228,8 +229,9 @@ def get_LCZ_station_image(eoi_code: str, v: int) -> str:
 def get_VUCI(lcz: str) -> float:
     # Vulnerability Urban Climate Index (taula Joan Gilabert).
     # Diccionari del tipus lcz:vuci
-    val = [100, 80, 70, 70, 60, 50, 60, 50, 30, 70, 50, 30, 30, 20, 40, 10, 20 ]
-    vuci = { k:v for k,v in zip(LCZ_KEYS, val) }
+    #         1    2   3   4   5   6   7   8   9   10  A   B   C   D   E   F   G
+    valors = [100, 80, 70, 70, 60, 50, 60, 50, 30, 70, 50, 30, 30, 20, 40, 10, 20 ]
+    vuci = { k:v for k,v in zip(LCZ_KEYS, valors) }
     return vuci.get(lcz, 0)
 
 

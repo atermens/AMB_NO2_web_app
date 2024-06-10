@@ -181,12 +181,12 @@ EOI_POB = {
 }
 
 
-def get_pob_data(eoi_code: str, yr: int) -> list:
+def get_pob_data(eoi_code: str, yr: int) -> tuple:
     # output: [p_0_14, p_15_64, p_65]
 
     dicc = EOI_POB.get(eoi_code, {}) # { yr: [0, ...], yr: [1, ...]}
     llista = dicc.get(yr, [])
-    if not llista: return []
+    if not llista: return (0, [])
 
     # tenemos que ver cual es la version: si es de tipo 0 o tipo 1...
     v = llista[0]
@@ -194,13 +194,13 @@ def get_pob_data(eoi_code: str, yr: int) -> list:
     if v == 0:
         #  0  1      2      3      4       5        6           7           8           9           10          11
         # [0, TOTAL, HOMES, DONES, P_0_14, P_15_64, P_65_I_MES, P_ESPANYOL, P_ESTRANGE, P_NASC_CAT, P_NASC_RES, P_NASC_EST,],
-        return llista[4:7]
+        return (3, llista[4:7])
     elif v == 1:
         #  0   1          2             3         4          5          6
         # [1, P_H_0_14, P_H_15_64, P_H_65_I_MES, P_D_0_14, P_D_15_64, P_D_65_I_MES,],
-        return [ llista[i+1] + llista[i+4] for i in range(3) ]
+        return (3, [ llista[i+1] + llista[i+4] for i in range(3) ])
     else:
-        return []
+        return (0, [])
 
 
 def get_CVP(eoi_code: str, yr: int, iP: int) -> float:
@@ -217,7 +217,10 @@ def get_CVP(eoi_code: str, yr: int, iP: int) -> float:
     #    https://www.idescat.cat/pub/?id=inddt&m=m
     #    A REVISAR !!!!
     
-    datos = get_pob_data(eoi_code, yr)   # [p_0_14, p_15_64, p_65]
+    n, datos = get_pob_data(eoi_code, yr)   # [p_0_14, p_15_64, p_65]
+    # check if datos is empty
+    if n == 0: return np.nan
+
     total = float(sum(datos))
 
     if iP == 0:
