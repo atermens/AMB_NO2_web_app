@@ -136,6 +136,7 @@ def get_NO2_data(eoi_code: str, yr: int) -> list:
 
 def get_NO2_mean(eoi_code: str, yr: int) -> float:
     llista = get_NO2_data(eoi_code, yr)
+    if not llista: return np.nan
     v = llista[0]
     if v in [0, 1]:
         return float(llista[1])
