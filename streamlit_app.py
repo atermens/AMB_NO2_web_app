@@ -32,9 +32,13 @@ from AirPollutionData import idaea
 CWD = os.getcwd()
 
 YEAR_OF_DATA = [2019, 2022, 2023]
+
 DEFAULT_YEAR = 2023
+
 DEFAULT_VERSION = 1
+
 DEFAULT_CVP_INDEX = 1
+
 DEFAULT_CONTAMINANT = 'NO2'
 
 # np.nan tiene asociado el color 250_250_250.png
@@ -341,7 +345,40 @@ def streamlit_main():
             col.metric(icgc.LCZ_NAME.get(c, ''), '')
 
 
+def get_NO2_annual_mean (nom_eoi:str, yr: int) -> float:
+    calendari = {
+        2019: [(1,31), (2,28), (3,31), (4,30), (5,31), (6,30), (7,31), (8,31), (9,30), (10,31), (11,30), (12,31)],
+        2020: [(1,31), (2,29), (3,31), (4,30), (5,31), (6,30), (7,31), (8,31), (9,30), (10,31), (11,30), (12,31)],
+        2021: [(1,31), (2,28), (3,31), (4,30), (5,31), (6,30), (7,31), (8,31), (9,30), (10,31), (11,30), (12,31)],
+        2022: [(1,31), (2,28), (3,31), (4,30), (5,31), (6,30), (7,31), (8,31), (9,30), (10,31), (11,30), (12,31)],
+        2023: [(1,31), (2,28), (3,31), (4,30), (5,31), (6,30), (7,31), (8,31), (9,30), (10,31), (11,30), (12,31)]
+    }
+    val_list = []
+    for mes, ld in calendari.get(yr, []):
+        for dia in range(1,ld+1):
+            ymd = f"{yr:0>4}-{mes:0>2}-{dia:0>2}"
+            print(ymd)
+            df = od.get_data (ymd, nom_eoi, DEFAULT_CONTAMINANT)
+            if not df.empty: val_list.append(get_hazard_data(df))
+    return round(np.nanmedian(np.array(val_list)), 2)
+
+
+def process_NO2_mean():
+    for nom_eoi in stations.ESTACIONS["nom_eoi"]:
+        eoi_code = stations.get_codi_eoi(nom_eoi)
+        print(f"--- {eoi_code} --- {nom_eoi}---")
+        valors = []
+        for yr in [2019, 2020, 2021, 2022, 2023]:
+            if yr in YEAR_OF_DATA:
+                valors.append(idaea.get_NO2_mean (eoi_code, yr))
+            else:
+                valors.append(get_NO2_annual_mean(nom_eoi, yr))
+        print(eoi_code, valors, nom_eoi)
+
+
 # ---------------------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    #process_NO2_mean()
     streamlit_main()
+
