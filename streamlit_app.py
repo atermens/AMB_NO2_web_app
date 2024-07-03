@@ -330,13 +330,13 @@ def streamlit_main():
     if not df.empty:
         row2_2.write(f"{contaminante} data in {eoi_name} ({ymd})")
         row2_2.line_chart(get_df_histograma_hores(contaminante, df))  # plot modo grafic linies
-        # row2_2.area_chart(get_df_histograma_hores(contaminante, df)) # plot modo area
+        row2_2.area_chart(get_df_histograma_hores(contaminante, df)) # plot modo area
 
         # plot modo histograma. En aquest cas, es fa un histograma acumulat...
         # row2_2.write(f"{contaminante} data in {eoi_name} ({ymd}) - cumulative histogram")
         # row2_2.bar_chart(get_df_histograma_hores(contaminante, df))
 
-    # ====================================================== ESTIC AQUI ====
+    # ======================================================
     st.subheader(f"LCZ distribution:")
     # vamos a pintar la informacion asociada a cada LCZ, con la imagen associada
     # el procedimiento va a ser muy rudimentario y seguro que se puede optimizar mas...
