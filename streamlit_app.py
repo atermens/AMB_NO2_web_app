@@ -333,7 +333,10 @@ def streamlit_main():
     # pintamos ahora el histograma de valores del contaminante...
     if not df.empty:
         row2_2.write(f"{contaminante} data in {eoi_name} ({ymd})")
-        row2_2.line_chart(get_df_histograma_hores(contaminante, df), x="hora", y=["mean", f"{contaminante}", "good", "moderate", "bad"])  # plot modo grafic linies
+        row2_2.line_chart(get_df_histograma_hores(contaminante, df),
+                          x="hora",
+                          y=["mean", f"{contaminante}", "good", "moderate", "bad"],
+                          color = ["#0033cc", "#000000", "#00cc00", "#ff9933", "#ff0000"])  # plot modo grafic linies
 
         # plot modo histograma. En aquest cas, es fa un histograma acumulat...
         #row2_2.write(f"{contaminante} data in {eoi_name} ({ymd}) - cumulative histogram")
