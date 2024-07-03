@@ -297,13 +297,14 @@ def streamlit_main():
     rd = AirPollutionRisk(eoi_code, df)
 
     row1_1.write(" ")
-    row1_1.subheader(f" {contaminante} Air Quality Index ({DEFAULT_YEAR}):")
+    row1_1.subheader(f" {contaminante} Air Quality Index:")
+    #row1_1.subheader(f" {contaminante} Air Quality Index ({DEFAULT_YEAR}):")
     # aqui pondremos el semaforo con el risk_data.risk
     semafor = rd.risk_image.get(DEFAULT_YEAR, '')
     if os.path.isfile(semafor): row1_1.image(semafor, caption=rd.risk_caption.get(DEFAULT_YEAR, ''), width=150)
 
     row1_2.write(" ")
-    row1_2.subheader(f" {contaminante} Vulnerability ({DEFAULT_YEAR}):")
+    row1_2.subheader(f" {contaminante} Vulnerability:")
     # aqui pondremos el semaforo con el risk_data.risk
     semafor = rd.risk_image.get(DEFAULT_YEAR, '')
     if os.path.isfile(semafor): row1_2.image(semafor, caption=rd.risk_caption.get(DEFAULT_YEAR, ''), width=150)
