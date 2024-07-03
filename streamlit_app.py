@@ -66,7 +66,7 @@ COLOR5 = {
 
 VCOLOR5 = {
     0: os.path.join(CWD, "rgb_img/250_250_250.png"), # no data
-    1: os.path.join(CWD, "rgb_img/150_010_050.png"), # azul <= 0.9
+    1: os.path.join(CWD, "rgb_img/000_000_255.png"), # azul <= 0.9
     2: os.path.join(CWD, "rgb_img/000_200_000.png"), # verde - <=1
     3: os.path.join(CWD, "rgb_img/255_255_000.png"), # amarillo - <= 1.1
     4: os.path.join(CWD, "rgb_img/255_000_000.png")  # rojo - > 1.1
