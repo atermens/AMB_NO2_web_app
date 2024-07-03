@@ -358,6 +358,7 @@ def streamlit_main():
     eoi_code = stations.get_codi_eoi(eoi_name)
 
     # calculamos todos los datos del riesgo associado al contaminante:
+    rdi = AirPollutionIndex(eoi_code)
     rd = AirPollutionRisk(eoi_code, df)
 
     row1_1.write(" ")
@@ -413,7 +414,7 @@ def streamlit_main():
     #for i, col in enumerate(st.columns(10)):
     for i, col in enumerate(st.columns(5)):
         for c in ck[i]:
-            dicc = rd.lcz_dict.get(DEFAULT_YEAR, {})
+            dicc = rdi.lcz_dict
             #col.metric(f"% LCZ {c}", dicc.get(c, -99.99))
             col.metric(f"", f"{dicc.get(c, -99.99)} %")
             col.image(icgc.get_LCZ_image(c))
