@@ -213,7 +213,7 @@ def get_LCZmax(eoi_code: str, tipo: int) -> tuple:
 
 
 def get_LCZ_image(lcz: str) -> str:
-    return os.path.join(os.getcwd(),f'lcz_img/LCZ{lcz}.png')
+    return os.path.join(os.getcwd(),f'lcz_img/lcz{lcz}.png')
 
 
 def get_LCZ_station_image(eoi_code: str, v: int) -> str:
