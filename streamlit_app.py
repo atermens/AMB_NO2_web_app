@@ -94,7 +94,7 @@ def get_df_histograma_hores(contaminante: str, df: pd.DataFrame) -> pd.DataFrame
 
     # ara creem la informacio que volem plotejar...
     value_dict = {
-        "hora": [ h + 1 for h in range(24)]
+        "hora": [ h + 1 for h in range(24)],
         "mean": [ v_mean if h in df.columns  else 0.0  for h in od.HORES ],
         f"{contaminante}": [ df[h].iloc[0]  if h in df.columns  else 0.0  for h in od.HORES ]
         }
