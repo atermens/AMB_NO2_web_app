@@ -377,8 +377,8 @@ def streamlit_main():
     # Vamos a comprovar si tenemos datos o no y calculamos todos los datos del riesgo asociado al contaminante:
     st.write(f" ")
     st.subheader(get_information_about_data(eoi_name, ymd, contaminante, df))
-    st.write(f"--- Year: DEFAULT_YEAR ---")
-    st.write(f"LCZ max: {rd.lcz_max.get(yr, '-')} | VUCI: {rd.vuci.get(yr, '-')} | CVP: {rd.cvpi.get(yr, '-')}")
+    #st.write(f"--- Year: DEFAULT_YEAR ---")
+    #st.write(f"LCZ max: {rd.lcz_max.get(yr, '-')} | VUCI: {rd.vuci.get(yr, '-')} | CVP: {rd.cvpi.get(yr, '-')}")
     #    st.write(f"Hazard({contaminante}): {rd.hazard_value.get(yr, '-')} | NO2 mean: {rd.no2_mean.get(yr, '-')}")
     #    st.write(f" Scenario: {rd.scenario_code.get(yr, '-')} | Risk: {rd.risk.get(yr, '-')}")
 
