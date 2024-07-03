@@ -337,8 +337,7 @@ def streamlit_main():
         row2_2.write(cdf.columns)
         row2_2.line_chart(cdf,
                           x="hora",
-                          y=["mean", f"{contaminante}", "good", "moderate", "bad"],
-                          color = ["#0033cc", "#000000", "#00cc00", "#ff9933", "#ff0000"])  # plot modo grafic linies
+                          y=["mean", f"{contaminante}", "good", "moderate", "bad"])  # plot modo grafic linies
 
         # plot modo histograma. En aquest cas, es fa un histograma acumulat...
         #row2_2.write(f"{contaminante} data in {eoi_name} ({ymd}) - cumulative histogram")
