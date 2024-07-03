@@ -357,7 +357,7 @@ def streamlit_main():
     row1_2.subheader(f" {contaminante} Vulnerability:")
     # aqui pondremos el semaforo con el risk_data.risk
     semafor = rd.vi_image
-    if os.path.isfile(semafor): row1_2.image(semafor, caption=rd.vi_caption), width=150)
+    if os.path.isfile(semafor): row1_2.image(semafor, caption=rd.vi_caption, width=150)
 
     # ======================================================
     # Vamos a comprovar si tenemos datos o no y calculamos todos los datos del riesgo asociado al contaminante:
