@@ -277,7 +277,7 @@ class AirPollutionIndex:
         self.lcz_dict, self.lcz_max = icgc.get_LCZmax(eoi_code, DEFAULT_VERSION)
 
         # vamos a calcular el self.vuci como VUCI ponderado
-        self.vuci_ponderado = get_VUCI_ponderado(eoi_code, DEFAULT_VERSION)
+        self.vuci_ponderado = icgc.get_VUCI_ponderado(eoi_code, DEFAULT_VERSION)
 
         self.cvpi = idescat.get_CVP(eoi_code, DEFAULT_YEAR, DEFAULT_CVP_INDEX)
 
@@ -299,7 +299,7 @@ class AirPollutionRisk:
             no2_mean_list.append(datos.no2_mean)
             vuci_ponderado_list.append(datos.vuci_ponderado)
             cvpi_list.append(datos.cvpi)
-        
+
         hazard = self.hazard_value / np.nanmean(np.array(no2_mean_list)) # aproximacion ya que mezclamos datos dia con medias anuales
         vuci = rdi.vuci_ponderado / np.nanmean(np.array(vuci_ponderado_list))
         cvpi = rdi.cvpi / np.nanmean(np.array(cvpi_list))
