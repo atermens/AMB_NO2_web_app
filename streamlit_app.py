@@ -266,7 +266,7 @@ def streamlit_main():
         # st.latex(r''' a + ar + a r^2 + a r^3 + \cdots + a r^{n-1} = \sum_{k=0}^{n-1} ar^k = a \left(\frac{1-r^{n}}{1-r}\right) ''')
 
     # ======================================================
-    row1_1, row1_2 = st.columns((2, 3))
+    row1_1, row1_2, row1_3 = st.columns((1, 1, 3))
 
     row1_1.subheader(f"Select ...")
     # escogemos el nombre de la estacion de la cual queremos consultar los datos
@@ -287,7 +287,7 @@ def streamlit_main():
     # Primero, vamos a pintar el mapa de situacion de las estaciones:
     mapstyle, initviewstate, selectedlayers = get_station_map_data(df)
     # row1_2.map(data=df, zoom=13, use_container_width=True)
-    row1_2.pydeck_chart(pdk.Deck(map_style=mapstyle, initial_view_state=initviewstate, layers=selectedlayers))
+    row1_3.pydeck_chart(pdk.Deck(map_style=mapstyle, initial_view_state=initviewstate, layers=selectedlayers))
 
     # buscamos el codigo de estacion asociado a eoi_name:
     eoi_code = stations.get_codi_eoi(eoi_name)
@@ -301,15 +301,21 @@ def streamlit_main():
     semafor = rd.risk_image.get(DEFAULT_YEAR, '')
     if os.path.isfile(semafor): row1_1.image(semafor, caption=rd.risk_caption.get(DEFAULT_YEAR, ''), width=150)
 
+    row1_2.write(" ")
+    row1_2.subheader(f" {contaminante} Vulnerability ({DEFAULT_YEAR}):")
+    # aqui pondremos el semaforo con el risk_data.risk
+    semafor = rd.risk_image.get(DEFAULT_YEAR, '')
+    if os.path.isfile(semafor): row1_2.image(semafor, caption=rd.risk_caption.get(DEFAULT_YEAR, ''), width=150)
+
     # ======================================================
     # Vamos a comprovar si tenemos datos o no y calculamos todos los datos del riesgo asociado al contaminante:
     st.write(f" ")
     st.subheader(get_information_about_data(eoi_name, ymd, contaminante, df))
-    for yr in YEAR_OF_DATA:
-        st.write(f"--- Year: {yr} ---")
-        st.write(f"LCZ max: {rd.lcz_max.get(yr, '-')} | VUCI: {rd.vuci.get(yr, '-')} | CVP: {rd.cvpi.get(yr, '-')}")
-        st.write(f"Hazard({contaminante}): {rd.hazard_value.get(yr, '-')} | NO2 mean: {rd.no2_mean.get(yr, '-')}")
-        st.write(f" Scenario: {rd.scenario_code.get(yr, '-')} | Risk: {rd.risk.get(yr, '-')}")
+    #for yr in YEAR_OF_DATA:
+    #    st.write(f"--- Year: {yr} ---")
+    #    st.write(f"LCZ max: {rd.lcz_max.get(yr, '-')} | VUCI: {rd.vuci.get(yr, '-')} | CVP: {rd.cvpi.get(yr, '-')}")
+    #    st.write(f"Hazard({contaminante}): {rd.hazard_value.get(yr, '-')} | NO2 mean: {rd.no2_mean.get(yr, '-')}")
+    #    st.write(f" Scenario: {rd.scenario_code.get(yr, '-')} | Risk: {rd.risk.get(yr, '-')}")
 
     # ======================================================
     row2_1, row2_2 = st.columns((2, 3))
