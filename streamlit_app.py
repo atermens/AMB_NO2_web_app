@@ -31,13 +31,13 @@ from AirPollutionData import idaea
 
 CWD = os.getcwd()
 
-YEAR_OF_DATA = [2019, 2022, 2023]
+YEAR_OF_DATA = [2019, 2022, 2023] # conjunto datos anuales que tenemos
 
 DEFAULT_YEAR = 2023
 
-DEFAULT_VERSION = 1
+DEFAULT_VERSION = 1 # version 0: TFM Mariela | 1: TFM Wenyu
 
-DEFAULT_CVP_INDEX = 1
+DEFAULT_CVP_INDEX = 1 # version datos poblacio, 0: Joan (TFM Mariela) | 1: idescat por seccion censal
 
 DEFAULT_CONTAMINANT = 'NO2'
 
@@ -56,6 +56,29 @@ CAPTION3 = {
     3: "high",
 }
 
+COLOR5 = {
+    0: os.path.join(CWD, "rgb_img/250_250_250.png"), # no data
+    1: os.path.join(CWD, "rgb_img/000_200_000.png"), # verde - bueno (menor que 20)
+    2: os.path.join(CWD, "rgb_img/255_255_000.png"), # amarillo - moderado (20-39)
+    3: os.path.join(CWD, "rgb_img/255_150_000.png"), # naranja - malo (40-59)
+    4: os.path.join(CWD, "rgb_img/255_000_000.png")  # rojo - muy malo (mayor que 60)
+}
+
+VCOLOR5 = {
+    0: os.path.join(CWD, "rgb_img/250_250_250.png"), # no data
+    1: os.path.join(CWD, "rgb_img/150_010_050.png"), # azul <= 0.9
+    2: os.path.join(CWD, "rgb_img/000_200_000.png"), # verde - <=1
+    3: os.path.join(CWD, "rgb_img/255_255_000.png"), # amarillo - <= 1.1
+    4: os.path.join(CWD, "rgb_img/255_000_000.png")  # rojo - > 1.1
+}
+
+CAPTION5 = {
+    0: "no data",
+    1: "low",
+    2: "medium",
+    3: "high",
+    4: "very high",
+}
 COLOR7 = {
     0: os.path.join(CWD, "rgb_img/250_250_250.png"),
     1: os.path.join(CWD, "rgb_img/000_255_000.png"),
@@ -216,37 +239,60 @@ def get_color3(scene_key: str, hazard: float, vuci: float, cvpi: float) -> tuple
     return (k, COLOR3.get(k, ''), CAPTION3.get(k, ''))
 
 
+def get_no2_color5(hazard: float, vuci: float, cvpi: float) -> tuple:
+    # risk = hazard x scenario_code
+    # vamos a modificar el hazard segun los valores de vuci i cvpi.
+    if np.isnan(hazard):
+        k1 = 0
+    else:
+        if hazard < 20.0:
+            k1 = 1
+        elif hazard < 40.0:
+            k1 = 2
+        elif hazard < 60.0:
+            k1 = 3
+        else:
+            k1 = 4
+
+    indice_compuesto = (vuci + cvpi + hazard ) / 3.0
+    if np.isnan(indice_compuesto):
+        k2 = 0
+    else:
+        if indice_compuesto <= 0.9:
+            k2 = 1
+        elif indice_compuesto <= 1.0:
+            k2 = 2
+        elif indice_compuesto <= 1.1:
+            k2 = 3
+        else:
+            k2 = 4
+
+    return (k1, COLOR5.get(k1, ''), CAPTION5.get(k1, ''), k2, VCOLOR5.get(k2, ''), CAPTION5.get(k2, ''))
+
+
 class AirPollutionRisk:
     def __init__(self, eoi_code: str, df: pd.DataFrame):
         # calculamos los porcentajes de cada LCZ, que se almacenan en un diccionario {lcz:%}
         # devolvemos tambien el codigo de LCZ maximo
-        dicc, lczmax = icgc.get_LCZmax(eoi_code, DEFAULT_VERSION)
-        vuci = icgc.get_VUCI(lczmax)
-        cvp_list = [ idescat.get_CVP(eoi_code, yr, DEFAULT_CVP_INDEX) for yr in YEAR_OF_DATA ]
-        no2_list = [ idaea.get_NO2_mean(eoi_code, yr) for yr in YEAR_OF_DATA ]
+        self.lcz_dict, self.lcz_max = icgc.get_LCZmax(eoi_code, DEFAULT_VERSION)
 
-        self.lcz_dict = {yr: dicc for yr in YEAR_OF_DATA}
-        self.lcz_max = {yr: lczmax for yr in YEAR_OF_DATA}
-        self.vuci = {yr: vuci for yr in YEAR_OF_DATA}
-        self.cvpi = { yr: cvp for yr, cvp in zip(YEAR_OF_DATA, cvp_list) }
-        self.no2_mean = { yr: no2 for yr, no2 in zip(YEAR_OF_DATA, no2_list) }
-        self.hazard_value = { yr: np.nan if df.empty else get_hazard_data(df) for yr in YEAR_OF_DATA }
+        # vamos a calcular el self.vuci como VUCI ponderado
+        suma = 0.0
+        for i, k in enumerate(icgc.LCZ_KEYS):
+            suma += self.lcz_dict.get(k, 0.0) * icgc.get_VUCI(k)
+        self.vuci_ponderado = suma / 100.0
 
-        self.scenario_code = {}
-        self.scenario_name = {}
-        self.risk = {}
-        self.risk_image = {}
-        self.risk_caption = {}
-        for yr in YEAR_OF_DATA:
-            cvp = self.cvpi.get(yr, 0.0)
-            hazard = self.hazard_value.get(yr, np.nan)
-            key, name = icgc.get_scenario(vuci, cvp)
-            risk, img, caption = get_color3(key, hazard, vuci, cvp)
-            self.scenario_code[yr] = key
-            self.scenario_name[yr] = name
-            self.risk[yr] = risk
-            self.risk_image[yr] = img
-            self.risk_caption[yr] = caption
+        self.cvpi = idescat.get_CVP(eoi_code, DEFAULT_YEAR, DEFAULT_CVP_INDEX)
+
+        self.no2_mean = idaea.get_NO2_mean(eoi_code, DEFAULT_YEAR)
+
+        self.hazard_value = get_hazard_data(df)
+
+        self.
+
+        self.risk, self.risk_image, self.risk_caption, self.vi, self.vi_image, self.vi_caption = get_no2_color5(self.hazard_value, self.vuci_ponderado, self.cvpi)
+
+
 
 
 def streamlit_main():
@@ -304,14 +350,14 @@ def streamlit_main():
     row1_1.subheader(f" {contaminante} Air Quality Index:")
     #row1_1.subheader(f" {contaminante} Air Quality Index ({DEFAULT_YEAR}):")
     # aqui pondremos el semaforo con el risk_data.risk
-    semafor = rd.risk_image.get(DEFAULT_YEAR, '')
-    if os.path.isfile(semafor): row1_1.image(semafor, caption=rd.risk_caption.get(DEFAULT_YEAR, ''), width=150)
+    semafor = rd.risk_image
+    if os.path.isfile(semafor): row1_1.image(semafor, caption=rd.risk_caption, width=150)
 
     row1_2.write(" ")
     row1_2.subheader(f" {contaminante} Vulnerability:")
     # aqui pondremos el semaforo con el risk_data.risk
-    semafor = rd.risk_image.get(DEFAULT_YEAR, '')
-    if os.path.isfile(semafor): row1_2.image(semafor, caption=rd.risk_caption.get(DEFAULT_YEAR, ''), width=150)
+    semafor = rd.vi_image
+    if os.path.isfile(semafor): row1_2.image(semafor, caption=rd.vi_caption), width=150)
 
     # ======================================================
     # Vamos a comprovar si tenemos datos o no y calculamos todos los datos del riesgo asociado al contaminante:
