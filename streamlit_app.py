@@ -239,7 +239,7 @@ def get_color3(scene_key: str, hazard: float, vuci: float, cvpi: float) -> tuple
     return (k, COLOR3.get(k, ''), CAPTION3.get(k, ''))
 
 
-def get_no2_color5(hazard: float, vuci: float, cvpi: float) -> tuple:
+def get_no2_color5(hazard: float, hazard_norm: float, vuci_norm: float, cvpi_norm: float) -> tuple:
     # risk = hazard x scenario_code
     # vamos a modificar el hazard segun los valores de vuci i cvpi.
     if np.isnan(hazard):
@@ -254,7 +254,7 @@ def get_no2_color5(hazard: float, vuci: float, cvpi: float) -> tuple:
         else:
             k1 = 4
 
-    indice_compuesto = (vuci + cvpi + hazard ) / 3.0
+    indice_compuesto = (vuci_norm + cvpi_norm + hazard_norm ) / 3.0
     if np.isnan(indice_compuesto):
         k2 = 0
     else:
@@ -270,25 +270,41 @@ def get_no2_color5(hazard: float, vuci: float, cvpi: float) -> tuple:
     return (k1, COLOR5.get(k1, ''), CAPTION5.get(k1, ''), k2, VCOLOR5.get(k2, ''), CAPTION5.get(k2, ''))
 
 
-class AirPollutionRisk:
-    def __init__(self, eoi_code: str, df: pd.DataFrame):
+class AirPollutionIndex:
+    def __init__(self, eoi_code:str):
         # calculamos los porcentajes de cada LCZ, que se almacenan en un diccionario {lcz:%}
         # devolvemos tambien el codigo de LCZ maximo
         self.lcz_dict, self.lcz_max = icgc.get_LCZmax(eoi_code, DEFAULT_VERSION)
 
         # vamos a calcular el self.vuci como VUCI ponderado
-        suma = 0.0
-        for i, k in enumerate(icgc.LCZ_KEYS):
-            suma += self.lcz_dict.get(k, 0.0) * icgc.get_VUCI(k)
-        self.vuci_ponderado = suma / 100.0
+        self.vuci_ponderado = get_VUCI_ponderado(eoi_code, DEFAULT_VERSION)
 
         self.cvpi = idescat.get_CVP(eoi_code, DEFAULT_YEAR, DEFAULT_CVP_INDEX)
 
         self.no2_mean = idaea.get_NO2_mean(eoi_code, DEFAULT_YEAR)
 
+
+class AirPollutionRisk:
+    def __init__(self, eoi_code: str, df: pd.DataFrame):
+        rdi = AirPollutionIndex(eoi_code)
         self.hazard_value = get_hazard_data(df)
 
-        self.risk, self.risk_image, self.risk_caption, self.vi, self.vi_image, self.vi_caption = get_no2_color5(self.hazard_value, self.vuci_ponderado, self.cvpi)
+        # necesitamos calcular hazard_norm, vuci_norm y cvpi_norm
+
+        no2_mean_list = [ ]
+        vuci_ponderado_list = []
+        cvpi_list = []
+        for estacion in stations.EOI_DF["codi_eoi"]:
+            datos = AirPollutionIndex(estacion)
+            no2_mean_list.append(datos.no2_mean)
+            vuci_ponderado_list.append(datos.vuci_ponderado)
+            cvpi_list.append(datos.cvpi)
+        
+        hazard = self.hazard_value / np.nanmean(np.array(no2_mean_list)) # aproximacion ya que mezclamos datos dia con medias anuales
+        vuci = rdi.vuci_ponderado / np.nanmean(np.array(vuci_ponderado_list))
+        cvpi = rdi.cvpi / np.nanmean(np.array(cvpi_list))
+
+        self.risk, self.risk_image, self.risk_caption, self.vi, self.vi_image, self.vi_caption = get_no2_color5(self.hazard_value, hazard, vuci, cvpi)
 
 
 
@@ -361,9 +377,8 @@ def streamlit_main():
     # Vamos a comprovar si tenemos datos o no y calculamos todos los datos del riesgo asociado al contaminante:
     st.write(f" ")
     st.subheader(get_information_about_data(eoi_name, ymd, contaminante, df))
-    #for yr in YEAR_OF_DATA:
-    #    st.write(f"--- Year: {yr} ---")
-    #    st.write(f"LCZ max: {rd.lcz_max.get(yr, '-')} | VUCI: {rd.vuci.get(yr, '-')} | CVP: {rd.cvpi.get(yr, '-')}")
+    st.write(f"--- Year: DEFAULT_YEAR ---")
+    st.write(f"LCZ max: {rd.lcz_max.get(yr, '-')} | VUCI: {rd.vuci.get(yr, '-')} | CVP: {rd.cvpi.get(yr, '-')}")
     #    st.write(f"Hazard({contaminante}): {rd.hazard_value.get(yr, '-')} | NO2 mean: {rd.no2_mean.get(yr, '-')}")
     #    st.write(f" Scenario: {rd.scenario_code.get(yr, '-')} | Risk: {rd.risk.get(yr, '-')}")
 
