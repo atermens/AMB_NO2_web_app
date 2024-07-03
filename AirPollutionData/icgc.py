@@ -242,7 +242,7 @@ def get_VUCI_ponderado(eoi_code: str, tipo: int) -> float:
     suma = 0.0
     for i, k in enumerate(LCZ_KEYS):
         suma += lcz_dict.get(k, 0.0) * get_VUCI(k)
-    return = suma / 100.0
+    return suma / 100.0
 
 # ---------------------------------------------------------------------------------------------------------------------
 # VUCI_CVP scenarios
