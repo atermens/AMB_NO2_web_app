@@ -273,7 +273,7 @@ def streamlit_main():
     eoi_name = row1_1.selectbox("station:", stations.EOI_DF)
     
     # escogemos la fecha que nos interesa, por defecto el dia de la consulta...
-    row1_2.write(" ")
+    row1_1.subheader(f" ")
     ymd = row1_2.date_input("one day:")
     
     # Restringimos a los dos contaminantes descritos en el TFM, aunque por defecto trataremos siempre el NO2.
