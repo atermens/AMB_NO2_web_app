@@ -334,7 +334,6 @@ def streamlit_main():
     if not df.empty:
         row2_2.write(f"{contaminante} data in {eoi_name} ({ymd})")
         cdf = get_df_histograma_hores(contaminante, df)
-        row2_2.write(cdf.columns)
         row2_2.line_chart(cdf,
                           x="hora",
                           y=[f"{contaminante}","mean", "good", "moderate", "bad"],
