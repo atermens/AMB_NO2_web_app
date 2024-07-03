@@ -95,8 +95,8 @@ def get_df_histograma_hores(contaminante: str, df: pd.DataFrame) -> pd.DataFrame
     # ara creem la informacio que volem plotejar...
     value_dict = {
         "hora": [ h + 1 for h in range(24)],
-        "mean": [ v_mean if h in df.columns  else 0.0  for h in od.HORES ],
         f"{contaminante}": [ df[h].iloc[0]  if h in df.columns  else 0.0  for h in od.HORES ],
+        "mean": [v_mean if h in df.columns else 0.0 for h in od.HORES],
         "good": [ 20.0 if h in df.columns  else 0.0  for h in od.HORES ],
         "moderate": [40.0 if h in df.columns else 0.0 for h in od.HORES],
         "bad": [60.0 if h in df.columns else 0.0 for h in od.HORES],
@@ -337,7 +337,8 @@ def streamlit_main():
         row2_2.write(cdf.columns)
         row2_2.line_chart(cdf,
                           x="hora",
-                          y=["mean", f"{contaminante}", "good", "moderate", "bad"])  # plot modo grafic linies
+                          y=[f"{contaminante}","mean", "good", "moderate", "bad"],
+                          color = ["#0033cc", "#ff66ff", "#33cc33", "#ff9900", "#ff0000"])  # plot modo grafic linies
 
         # plot modo histograma. En aquest cas, es fa un histograma acumulat...
         #row2_2.write(f"{contaminante} data in {eoi_name} ({ymd}) - cumulative histogram")
