@@ -351,7 +351,7 @@ def streamlit_main():
             #col.metric(f"% LCZ {c}", dicc.get(c, -99.99))
             col.metric(f"", f"{dicc.get(c, -99.99)} %")
             col.image(icgc.get_LCZ_image(c))
-            col.metric(icgc.LCZ_NAME.get(c, ''), '')
+            #col.metric(icgc.LCZ_NAME.get(c, ''), '')
 
 
 def get_NO2_annual_mean (nom_eoi:str, yr: int) -> float:
