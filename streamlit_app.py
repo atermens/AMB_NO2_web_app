@@ -361,7 +361,7 @@ def streamlit_main():
     rd = AirPollutionRisk(eoi_code, df)
 
     row1_1.write(" ")
-    row1_1.subheader(f" {contaminante} Concentration:")
+    row1_1.subheader(f" {contaminante} Daily Mean Concentration:")
     #row1_1.subheader(f" {contaminante} Air Quality Index ({DEFAULT_YEAR}):")
     # aqui pondremos el semaforo con el risk_data.risk
     semafor = rd.risk_image
