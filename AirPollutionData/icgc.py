@@ -232,8 +232,17 @@ def get_VUCI(lcz: str) -> float:
     #         1    2   3   4   5   6   7   8   9   10  A   B   C   D   E   F   G
     valors = [100, 80, 70, 70, 60, 50, 60, 50, 30, 70, 50, 30, 30, 20, 40, 10, 20 ]
     vuci = { k:v for k,v in zip(LCZ_KEYS, valors) }
+
     return vuci.get(lcz, 0)
 
+
+def get_VUCI_ponderado(eoi_code: str, tipo: int) -> float:
+    lcz_dict, lcz_max = get_LCZmax(eoi_code, tipo)
+    # vamos a calcular el VUCI ponderado
+    suma = 0.0
+    for i, k in enumerate(LCZ_KEYS):
+        suma += lcz_dict.get(k, 0.0) * get_VUCI(k)
+    return = suma / 100.0
 
 # ---------------------------------------------------------------------------------------------------------------------
 # VUCI_CVP scenarios
