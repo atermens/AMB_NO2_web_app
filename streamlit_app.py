@@ -348,7 +348,8 @@ def streamlit_main():
     for i, col in enumerate(st.columns(5)):
         for c in ck[i]:
             dicc = rd.lcz_dict.get(DEFAULT_YEAR, {})
-            col.metric(f"% LCZ {c}", dicc.get(c, -99.99))
+            #col.metric(f"% LCZ {c}", dicc.get(c, -99.99))
+            col.metric(f"", f"{dicc.get(c, -99.99)} %")
             col.image(icgc.get_LCZ_image(c))
             col.metric(icgc.LCZ_NAME.get(c, ''), '')
 
