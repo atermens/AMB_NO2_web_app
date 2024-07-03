@@ -268,13 +268,13 @@ def streamlit_main():
     # ======================================================
     row1_1, row1_2, row1_3 = st.columns((1, 1, 3))
 
-    row1_1.subheader(f"Select station")
+    row1_1.subheader(f"Select...")
     # escogemos el nombre de la estacion de la cual queremos consultar los datos
-    eoi_name = row1_1.selectbox("", stations.EOI_DF)
+    eoi_name = row1_1.selectbox("station", stations.EOI_DF)
     
     # escogemos la fecha que nos interesa, por defecto el dia de la consulta...
-    row1_1.subheader(f"Select one day")
-    ymd = row1_2.date_input("")
+    row1_2.subheader(f" ")
+    ymd = row1_2.date_input("one day")
     
     # Restringimos a los dos contaminantes descritos en el TFM, aunque por defecto trataremos siempre el NO2.
     # contaminante = row1_1.radio("pollutant:", ('NO2', 'PM2.5'))
