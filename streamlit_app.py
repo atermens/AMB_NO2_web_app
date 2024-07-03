@@ -288,8 +288,6 @@ class AirPollutionRisk:
 
         self.hazard_value = get_hazard_data(df)
 
-        self.
-
         self.risk, self.risk_image, self.risk_caption, self.vi, self.vi_image, self.vi_caption = get_no2_color5(self.hazard_value, self.vuci_ponderado, self.cvpi)
 
 
